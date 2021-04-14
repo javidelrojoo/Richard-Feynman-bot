@@ -44,5 +44,6 @@ async def unload(ctx):
         client.unload_extension(f'cogs.{file}')
     await ctx.send('Se descargaron los cogs')
 
+token = os.getenv('TOKEN')
 
-client.run('NzY3NTA0MTA2NjMzMDM1Nzk2.X4y35g.-48J2CArk1J-Q9YM8oeoal9de-w')
+client.run(token)

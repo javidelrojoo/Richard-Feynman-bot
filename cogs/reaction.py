@@ -5,8 +5,7 @@ import asyncio
 import os
 import pymongo
 
-mongo_url = "mongodb+srv://javitau:moVRklKtovCBhmI9@cluster0.vnocw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-
+mongo_url = token = os.getenv('MONGO_URL')
 mongoclient = pymongo.MongoClient(mongo_url)
 mongodb = mongoclient['Feynman']
 mongoreactions = mongodb['Reactions']
