@@ -23,27 +23,6 @@ async def on_ready():
     print('------')
 
 
-@client.command()
-async def reload(ctx):
-    for file in cogs:
-        client.unload_extension(f'cogs.{file}')
-        client.load_extension(f'cogs.{file}')
-    await ctx.send('Se recargaron los cogs')
-
-
-@client.command()
-async def load(ctx):
-    for file in cogs:
-        client.load_extension(f'cogs.{file}')
-    await ctx.send('Se cargaron los cogs')
-
-
-@client.command()
-async def unload(ctx):
-    for file in cogs:
-        client.unload_extension(f'cogs.{file}')
-    await ctx.send('Se descargaron los cogs')
-
 token = os.getenv('TOKEN')
 
 client.run(token)
