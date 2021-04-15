@@ -5,6 +5,7 @@ import asyncio
 import os
 import pymongo
 from bson import ObjectId
+import bson
 
 mongo_url = os.getenv('MONGO_URL')
 mongoclient = pymongo.MongoClient(mongo_url)
