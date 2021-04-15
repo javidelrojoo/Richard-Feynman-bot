@@ -16,7 +16,7 @@ class Reaction(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
+    @commands.command(brief='Agrega un reaction-role', help='Con este comando podés agregar un reaction-role siguiendo las instrucciones que el mismo bot te va a ir diciendo. Una falla común es que el bot esté por debajo del rol que quiere asignar, lo cual va a desencadenar en que el bot no pueda hacer su trabajo, para evitar eso asegurarse que el bot esté por encima de los roles que quiere agregar como reaction-role.')
     async def add(self, ctx):
 
         def check_author(m):
@@ -125,13 +125,13 @@ class Reaction(commands.Cog):
         embed = discord.Embed(title="Setup Listo")
         embed.add_field(name="ID de la reacción", value=str(_id), inline=False)
         embed.add_field(name="Canal", value="<#"+str(channel_id)+'>', inline=False)
-        embed.add_field(name="Link del mensaje", value=[Hacé click acá](str(msg.jump_url)), inline=False)
+        embed.add_field(name="Link del mensaje", value=f'[Hacé click acá]({msg.jump_url})', inline=False)
         embed.add_field(name="Emoji", value=reaction, inline=True)
         embed.add_field(name="Rol", value="<@&"+str(role_id)+'>', inline=True)
         await ctx.send(embed=embed)
         await clear_all()
 
-    @commands.command()
+    @commands.command(brief='Borra un reaction-role', help='Dando una ID como argumento, borra ese reaction-role. Podés buscar la ID en el mensaje luego de ser seteado o con el comando rf!list')
     async def delete(self, ctx, id):
         dlts = mongoreactions.delete_one({'_id': ObjectId(id)})
         if dlts.deleted_count != 1:
@@ -145,7 +145,7 @@ class Reaction(commands.Cog):
             await ctx.send('Me tenés que dar una ID como argumento')
             return
     
-    @commands.command()
+    @commands.command(brief='Muestra los reaction-role de este server', help='Te muestra un embed con los reaction-role de este server, si son muchos los separa en páginas. Por cada reaction-role muestra, su ID, el ID del mensaje, la reacción y el rol que asigna.')
     async def list(self, ctx):
         guild_id = ctx.guild.id
 
