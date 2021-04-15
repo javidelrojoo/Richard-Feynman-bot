@@ -156,7 +156,13 @@ class Reaction(commands.Cog):
             if len(embed.fields) == 24:
                 contents.append(embed)
                 embed = discord.Embed()
-
+        
+        contents.append(embed)
+        
+        if contents == []:
+            ctx.send('No hay ningún reaction-role en este server')
+            return
+        
         pages = len(contents)
         cur_page = 1
         contents[0].set_footer(text=f'Pagina {cur_page}/{pages}')
