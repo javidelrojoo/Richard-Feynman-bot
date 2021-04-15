@@ -152,7 +152,7 @@ class Reaction(commands.Cog):
         contents = []
         embed = discord.Embed()
         for x in mongoreactions.find({'guild_id': guild_id}):
-            embed.add_field(name=str(x['_id']), value=f'{x['msg_id']}\n{x['reaction_name']}\n<@&{x['role_id']}>'), inline=True)
+            embed.add_field(name=str(x['_id']), value=f"{x['msg_id']}\n{x['reaction_name']}\n<@&{x['role_id']}>", inline=True)
             if len(embed.fields) == 24:
                 contents.append(embed)
                 embed = discord.Embed()
