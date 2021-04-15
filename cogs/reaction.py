@@ -137,7 +137,7 @@ class Reaction(commands.Cog):
         if dlts.deleted_count != 1:
             await ctx.send('No se encontró ninguna reacción con esa ID')
             return
-        ctx.send('Se borró correctamente')
+        await ctx.send('Se borró correctamente')
     
     @delete.error
     async def delete_error(self, ctx, error):
