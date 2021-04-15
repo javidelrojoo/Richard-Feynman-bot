@@ -4,35 +4,17 @@ from discord.utils import get
 import asyncio
 import os
 import pymongo
+from bson import ObjectId
 
-mongo_url = token = os.getenv('MONGO_URL')
+mongo_url = os.getenv('MONGO_URL')
 mongoclient = pymongo.MongoClient(mongo_url)
 mongodb = mongoclient['Feynman']
 mongoreactions = mongodb['Reactions']
-
-reactions_dict = [
-    {
-        'msg_id': 830177189764661278,
-        'channel_id': 734846058613440643,
-        'reaction_name': '👀',
-        'role_id': 730894218297475083
-    }
-]
-
 
 class Reaction(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-
-    @commands.command()
-    async def reactiones(self, ctx):
-        print(reactions_dict)
 
     @commands.command()
     async def add(self, ctx):
@@ -132,18 +114,80 @@ class Reaction(commands.Cog):
             return await clear_all()
         except asyncio.TimeoutError:
             return await clear_all()
-
-        mongoreactions.insert_one({'msg_id': msg_id, 'channel_id': channel_id, 'reaction_name': reaction_name, 'role_id': role_id})
+        
+        guild_id = ctx.guild.id
+        
+        _id = mongoreactions.insert_one({'guild_id':guild_id ,'msg_id': msg_id, 'channel_id': channel_id, 'reaction_name': reaction_name, 'role_id': role_id})
+        _id = _id.inserted_id
         msg = await channel.fetch_message(msg_id)
         await msg.add_reaction(reaction)
 
         embed = discord.Embed(title="Setup Listo")
+        embed.add_field(name="ID de la reacción", value=str(_id), inline=False)
         embed.add_field(name="Canal", value="<#"+str(channel_id)+'>', inline=False)
-        embed.add_field(name="ID del mensaje", value=str(msg_id), inline=False)
+        embed.add_field(name="Link del mensaje", value=[Hacé click acá](str(msg.jump_url)), inline=False)
         embed.add_field(name="Emoji", value=reaction, inline=True)
         embed.add_field(name="Rol", value="<@&"+str(role_id)+'>', inline=True)
         await ctx.send(embed=embed)
         await clear_all()
+
+    @commands.command()
+    async def delete(self, ctx, id):
+        dlts = mongoreactions.delete_one({'_id': ObjectId(id)})
+        if dlts.deleted_count != 1:
+            ctx.send('No se encontró ninguna reacción con esa ID')
+            return
+        ctx.send('Se borró correctamente')
+    
+    @delete.error
+    async def delete_error(self, ctx, error):
+        if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+            await ctx.send('Me tenés que dar una ID como argumento')
+            return
+    
+    @commands.command()
+    async def list(self, ctx):
+        guild_id = ctx.guild.id
+
+        contents = []
+        embed = discord.Embed()
+        for x in mongoreactions.find({'guild_id': guild_id}):
+            embed.add_field(name=str(x['_id']), value=f'{x['msg_id']}\n{x['reaction_name']}\n<@&{x['role_id']}>'), inline=True)
+            if len(embed.fields) == 24:
+                contents.append(embed)
+                embed = discord.Embed()
+
+        pages = len(contents)
+        cur_page = 1
+        contents[0].set_footer(text=f'Pagina {cur_page}/{pages}')
+        message = await ctx.send(embed=contents[0])
+
+        await message.add_reaction("◀️")
+        await message.add_reaction("▶️")
+
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in ["◀️", "▶️"]
+
+        while True:
+            try:
+                reaction, user = await self.client.wait_for("reaction_add", timeout=15, check=check)
+                if str(reaction.emoji) == "▶️" and cur_page != pages:
+                    cur_page += 1
+                    contents[cur_page-1].set_footer(text=f'Pagina {cur_page}/{pages}')
+                    await message.edit(embed=contents[cur_page-1])
+                    await message.remove_reaction(reaction, user)
+
+                elif str(reaction.emoji) == "◀️" and cur_page > 1:
+                    cur_page -= 1
+                    contents[cur_page - 1].set_footer(text=f'Pagina {cur_page}/{pages}')
+                    await message.edit(embed=contents[cur_page-1])
+                    await message.remove_reaction(reaction, user)
+                else:
+                    await message.remove_reaction(reaction, user)
+            except asyncio.TimeoutError:
+                await message.remove_reaction("◀️", self.client.user)
+                await message.remove_reaction("▶️", self.client.user)
+                break
 
     async def process_reaction(self, payload):
         for i in mongoreactions.find():
