@@ -135,7 +135,7 @@ class Reaction(commands.Cog):
     async def delete(self, ctx, id):
         dlts = mongoreactions.delete_one({'_id': ObjectId(id)})
         if dlts.deleted_count != 1:
-            ctx.send('No se encontró ninguna reacción con esa ID')
+            await ctx.send('No se encontró ninguna reacción con esa ID')
             return
         ctx.send('Se borró correctamente')
     
@@ -145,14 +145,14 @@ class Reaction(commands.Cog):
             await ctx.send('Me tenés que dar una ID como argumento')
             return
     
-    @commands.command(brief='Muestra los reaction-role de este server', help='Te muestra un embed con los reaction-role de este server, si son muchos los separa en páginas. Por cada reaction-role muestra, su ID, el ID del mensaje, la reacción y el rol que asigna.')
+    @commands.command(brief='Muestra los reaction-role de este server', help='Te muestra un embed con los reaction-role de este server, si son muchos los separa en páginas. Por cada reaction-role muestra, su ID, el link del mensaje, la reacción y el rol que asigna.')
     async def list(self, ctx):
         guild_id = ctx.guild.id
 
         contents = []
         embed = discord.Embed()
         for x in mongoreactions.find({'guild_id': guild_id}):
-            embed.add_field(name=str(x['_id']), value=f"{x['msg_id']}\n{x['reaction_name']}\n<@&{x['role_id']}>", inline=True)
+            embed.add_field(name=str(x['_id']), value=f"[Hacé click acá](https://discord.com/channels/{x['guild_id']}/{x['channel_id']}/{x['msg_id']})\n{x['reaction_name']}\n<@&{x['role_id']}>", inline=True)
             if len(embed.fields) == 24:
                 contents.append(embed)
                 embed = discord.Embed()
@@ -160,7 +160,7 @@ class Reaction(commands.Cog):
         contents.append(embed)
         
         if contents == []:
-            ctx.send('No hay ningún reaction-role en este server')
+            await ctx.send('No hay ningún reaction-role en este server')
             return
         
         pages = len(contents)
