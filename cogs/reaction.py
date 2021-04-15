@@ -144,6 +144,10 @@ class Reaction(commands.Cog):
         if isinstance(error, discord.ext.commands.MissingRequiredArgument):
             await ctx.send('Me tenés que dar una ID como argumento')
             return
+        if isinstance(error, bson.errors.InvalidId):
+            await ctx.send('Ingresá una ID válida')
+            return
+        raise error
     
     @commands.command(brief='Muestra los reaction-role de este server', help='Te muestra un embed con los reaction-role de este server, si son muchos los separa en páginas. Por cada reaction-role muestra, su ID, el link del mensaje, la reacción y el rol que asigna.')
     async def list(self, ctx):
