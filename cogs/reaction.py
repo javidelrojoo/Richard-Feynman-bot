@@ -145,7 +145,7 @@ class Reaction(commands.Cog):
         if isinstance(error, discord.ext.commands.MissingRequiredArgument):
             await ctx.send('Me tenés que dar una ID como argumento')
             return
-        if isinstance(error, bson.errors.InvalidId):
+        if isinstance(error.original, bson.errors.InvalidId):
             await ctx.send('Ingresá una ID válida')
             return
         raise error
