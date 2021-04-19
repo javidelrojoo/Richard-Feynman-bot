@@ -16,6 +16,10 @@ class Reaction(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+    
+    @commands.command(brief='Te dice el ping del bot', help='Usando este comando podes averiguar el ping del bot.')
+    async def ping(self, ctx):
+        await ctx.send(f'Pong! {round(self.client.latency * 1000, 2)} ms')
 
     @commands.command(brief='Agrega un reaction-role', help='Con este comando podés agregar un reaction-role siguiendo las instrucciones que el mismo bot te va a ir diciendo. Una falla común es que el bot esté por debajo del rol que quiere asignar, lo cual va a desencadenar en que el bot no pueda hacer su trabajo, para evitar eso asegurarse que el bot esté por encima de los roles que quiere agregar como reaction-role.')
     async def add(self, ctx):
