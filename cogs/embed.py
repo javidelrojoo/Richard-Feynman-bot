@@ -16,7 +16,7 @@ class Embed(commands.Cog):
 
         async def clear_all():
             for i in msg_sent:
-                await i.delete(1)
+                await i.delete(delay=1.)
             return
 
         msg_sent = [ctx.message]
