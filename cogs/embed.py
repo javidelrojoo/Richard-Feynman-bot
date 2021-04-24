@@ -65,7 +65,7 @@ class Embed(commands.Cog):
         server_id = int(url[4])
         channel_id = int(url[6])
         msg_id = int(url[5])
-        server = client.get_guild(server_id)
+        server = self.client.get_guild(server_id)
         channel = server.get_channel(channel_id)
         message = await channel.fetch_message(msg_id)
 
