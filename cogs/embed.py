@@ -8,9 +8,7 @@ class Embed(commands.Cog):
     def __init__(self, client):
         self.client = client
     
-    @commands.command()
-    async def embed(self, ctx):
-
+    async def get_title_content():
         def check_author(m):
             return m.author == ctx.message.author
 
@@ -48,6 +46,12 @@ class Embed(commands.Cog):
             await clear_all()
             raise error
             return
+        return title_embed, content_embed
+    
+    @commands.command()
+    async def embed(self, ctx):
+
+        title_embed, content_embed = await self.client.get_title_content()
         
         embed=discord.Embed(title=title_embed, description=content_embed)
         await ctx.send(embed=embed)
@@ -56,7 +60,20 @@ class Embed(commands.Cog):
         return
     
     @commands.command()
-    async def edit(self, ctx):
+    async def edit(self, ctx, url):
+        url = url.split('/')
+        server_id = int(link[4])
+        channel_id = int(link[6])
+        msg_id = int(link[5])
+        server = client.get_guild(server_id)
+        channel = server.get_channel(channel_id)
+        message = await channel.fetch_message(msg_id)
+
+        title_embed, content_embed = await self.client.get_title_content()
+        embed=discord.Embed(title=title_embed, description=content_embed)
+
+        await message.edit(embed=embed)
+
         return
 
 def setup(client):
