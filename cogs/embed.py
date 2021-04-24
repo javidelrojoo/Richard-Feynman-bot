@@ -21,7 +21,7 @@ class Embed(commands.Cog):
 
         msg_sent = [ctx.message]
         
-        msg1 = ctx.send('¿Que titulo queres para el embed?')
+        msg1 = await ctx.send('¿Que titulo queres para el embed?')
         msg_sent.append(msg1)
 
         try:
@@ -35,7 +35,7 @@ class Embed(commands.Cog):
             raise error
             return
         
-        msg2 = ctx.send('¿Que contenido queres para el embed?')
+        msg2 = await ctx.send('¿Que contenido queres para el embed?')
         msg_sent.append(msg2)
 
         try:
