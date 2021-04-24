@@ -8,7 +8,7 @@ class Embed(commands.Cog):
     def __init__(self, client):
         self.client = client
     
-    @commands.group(invoke_without_command=True)
+    @commands.command()
     async def embed(self, ctx):
 
         def check_author(m):
@@ -55,7 +55,7 @@ class Embed(commands.Cog):
 
         return
     
-    @embed.command()
+    @commands.command()
     async def edit(self, ctx):
         return
 
