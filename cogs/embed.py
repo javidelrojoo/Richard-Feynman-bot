@@ -49,7 +49,7 @@ class Embed(commands.Cog):
         await clear_all()
         return title_embed, content_embed
     
-    @commands.command()
+    @commands.command(brief="Crea un embed", help="Con este comando creas un embed rapidamente, es tambien basico. Por ahora solo se le puede poner titulo y descripción.")
     async def embed(self, ctx):
 
         title_embed, content_embed = await self.get_title_content(ctx)
@@ -59,7 +59,7 @@ class Embed(commands.Cog):
 
         return
     
-    @commands.command()
+    @commands.command(brief="Edita un embed", help="Edita un embed que ya hayas creado con el comando rf!embed, por ahora solo funciona con el link del mensaje.")
     async def edit(self, ctx, url):
         url = url.split('/')
         server_id = int(url[4])
