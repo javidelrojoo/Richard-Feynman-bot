@@ -12,7 +12,7 @@ class Others(commands.Cog):
     async def ping(self, ctx):
         await ctx.send(f'Pong! {round(self.client.latency * 1000, 2)} ms')
     
-    @commands.command(brief='A link so you can invite to other servers')
+    @commands.command(brief='A link so you can invite me to other servers')
     async def invite(self, ctx):
         await ctx.send('https://discord.com/oauth2/authorize?client_id=767504106633035796&scope=bot&permissions=8')
 

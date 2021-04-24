@@ -17,7 +17,7 @@ class Reaction(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief='Agrega un reaction-role', help='Con este comando podés agregar un reaction-role siguiendo las instrucciones que el mismo bot te va a ir diciendo. Una falla común es que el bot esté por debajo del rol que quiere asignar, lo cual va a desencadenar en que el bot no pueda hacer su trabajo, para evitar eso asegurarse que el bot esté por encima de los roles que quiere agregar como reaction-role.')
+    @commands.command(brief='Adds a reaction-role to a message', help="With this command you can add a reaction-role following the instructions I'll tell you. You have to make sure I'm above the role you want me to grant, otherwise I won't be able to do my job.")
     async def add(self, ctx):
 
         def check_author(m):
@@ -33,7 +33,7 @@ class Reaction(commands.Cog):
 
         msg_sent = [ctx.message]
 
-        msg1 = await ctx.send("¿En que canal está el mensaje para reaccionar?")
+        msg1 = await ctx.send("In which channel is the message?")
         msg_sent.append(msg1)
         try:
             channel_id = await self.client.wait_for("message", check=check_author, timeout=30.)
@@ -43,7 +43,7 @@ class Reaction(commands.Cog):
                 if self.client.get_channel(channel_id) is not None:
                     channel = self.client.get_channel(channel_id)
                 else:
-                    error_msg1a = await ctx.send('Tenés que pasarme un canal válido')
+                    error_msg1a = await ctx.send('You have to give me a valid message')
                     msg_sent.append(error_msg1a)
                     await asyncio.sleep(5.)
                     return await clear_all()
@@ -51,33 +51,33 @@ class Reaction(commands.Cog):
                 channel = channel_id.channel_mentions[0]
                 channel_id = channel.id
         except ValueError:
-            error_msg1b = await ctx.send('Tenés que pasarme un canal válido')
+            error_msg1b = await ctx.send('You have to give me a valid channel')
             msg_sent.append(error_msg1b)
             await asyncio.sleep(5.)
             return await clear_all()
         except asyncio.TimeoutError:
             return await clear_all()
 
-        msg2 = await ctx.send("¿En que mensaje? (Pasame el ID)")
+        msg2 = await ctx.send("What is the message ID?")
         msg_sent.append(msg2)
         try:
             msg_id = await self.client.wait_for("message", check=check_author, timeout=30.)
             msg_sent.append(msg_id)
             msg_id = int(msg_id.content)
             if await channel.fetch_message(msg_id) is None:
-                error_msg2a = await ctx.send('Tenés que pasarme una ID válida')
+                error_msg2a = await ctx.send('You have to give a valid message ID, maybe it\'s not in the channel you told me before')
                 msg_sent.append(error_msg2a)
                 await asyncio.sleep(5.)
                 return await clear_all()
         except asyncio.TimeoutError:
             return await clear_all()
         except ValueError:
-            error_msg2b = await ctx.send('Tenés que pasarme una ID válida')
+            error_msg2b = await ctx.send('You have to give me a valid message ID')
             msg_sent.append(error_msg2b)
             await asyncio.sleep(5.)
             return await clear_all()
 
-        msg3 = await ctx.send("Reaccioná a este mensaje con el emoji que quieras usar para dar el rol")
+        msg3 = await ctx.send("React this message with the emoji you want for the reaction")
         msg_sent.append(msg3)
         try:
             emote, *_ = await self.client.wait_for("reaction_add", check=check_reaction, timeout=30.)
@@ -93,7 +93,7 @@ class Reaction(commands.Cog):
         except asyncio.TimeoutError:
             return await clear_all()
 
-        msg4 = await ctx.send("¿Que rol queres dar?")
+        msg4 = await ctx.send("What role you want me to give?")
         msg_sent.append(msg4)
         try:
             role_id = await self.client.wait_for("message", check=check_author, timeout=30.)
@@ -101,7 +101,7 @@ class Reaction(commands.Cog):
             if not role_id.role_mentions:
                 role_id = int(role_id.content)
                 if ctx.guild.get_role(role_id) is None:
-                    error_msg4a = await ctx.send('Tenés que pasarme un rol válido')
+                    error_msg4a = await ctx.send('You have to give me a valid role')
                     msg_sent.append(error_msg4a)
                     await asyncio.sleep(5.)
                     return await clear_all()
@@ -109,7 +109,7 @@ class Reaction(commands.Cog):
                 role = role_id.role_mentions[0]
                 role_id = role.id
         except ValueError:
-            error_msg4b = await ctx.send('Tenés que pasarme un rol válido')
+            error_msg4b = await ctx.send('You have to give me a valid role')
             msg_sent.append(error_msg4b)
             await asyncio.sleep(5.)
             return await clear_all()
@@ -123,34 +123,34 @@ class Reaction(commands.Cog):
         msg = await channel.fetch_message(msg_id)
         await msg.add_reaction(reaction)
 
-        embed = discord.Embed(title="Setup Listo")
-        embed.add_field(name="ID de la reacción", value=str(_id), inline=False)
-        embed.add_field(name="Canal", value="<#"+str(channel_id)+'>', inline=False)
-        embed.add_field(name="Link del mensaje", value=f'[Hacé click acá]({msg.jump_url})', inline=False)
+        embed = discord.Embed(title="Setup Ready")
+        embed.add_field(name="ID of the reaction", value=str(_id), inline=False)
+        embed.add_field(name="Channel", value="<#"+str(channel_id)+'>', inline=False)
+        embed.add_field(name="Link of the message", value=f'[click here]({msg.jump_url})', inline=False)
         embed.add_field(name="Emoji", value=reaction, inline=True)
-        embed.add_field(name="Rol", value="<@&"+str(role_id)+'>', inline=True)
+        embed.add_field(name="Role", value="<@&"+str(role_id)+'>', inline=True)
         await ctx.send(embed=embed)
         await clear_all()
 
-    @commands.command(brief='Borra un reaction-role', help='Dando una ID como argumento, borra ese reaction-role. Podés buscar la ID en el mensaje luego de ser seteado o con el comando rf!list')
+    @commands.command(brief='Deletes a reaction-role', help='Giving me the reaction ID, I will delete the reaction-role and I will stop giving the role to the users that react with the emoji.')
     async def delete(self, ctx, id):
         dlts = mongoreactions.delete_one({'_id': ObjectId(id)})
         if dlts.deleted_count != 1:
-            await ctx.send('No se encontró ninguna reacción con esa ID')
+            await ctx.send('I didn\'t found any reaction with that ID')
             return
-        await ctx.send('Se borró correctamente')
+        await ctx.send('I\'ve deleted it correctly')
     
     @delete.error
     async def delete_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-            await ctx.send('Me tenés que dar una ID como argumento')
+            await ctx.send('You have to give me a reaction ID')
             return
         if isinstance(error.original, bson.errors.InvalidId):
-            await ctx.send('Ingresá una ID válida')
+            await ctx.send('Invalid ID')
             return
         raise error
     
-    @commands.command(brief='Muestra los reaction-role de este server', help='Te muestra un embed con los reaction-role de este server, si son muchos los separa en páginas. Por cada reaction-role muestra, su ID, el link del mensaje, la reacción y el rol que asigna.')
+    @commands.command(brief='Shows you the list of reaction-roles of this server')
     async def list(self, ctx):
         guild_id = ctx.guild.id
 
