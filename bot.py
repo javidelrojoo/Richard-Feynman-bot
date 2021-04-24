@@ -8,7 +8,7 @@ intents.members = True
 
 client = commands.Bot(command_prefix='rf!', intents=intents)
 
-cogs = ['reaction']
+cogs = ['reaction', 'embed']
 
 if __name__ == '__main__':
     for f in cogs:
