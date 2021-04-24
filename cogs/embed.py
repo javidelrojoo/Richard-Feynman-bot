@@ -51,7 +51,7 @@ class Embed(commands.Cog):
     @commands.command()
     async def embed(self, ctx):
 
-        title_embed, content_embed = await self.get_title_content(self, ctx)
+        title_embed, content_embed = await self.get_title_content(ctx)
         
         embed=discord.Embed(title=title_embed, description=content_embed)
         await ctx.send(embed=embed)
@@ -69,7 +69,7 @@ class Embed(commands.Cog):
         channel = server.get_channel(channel_id)
         message = await channel.fetch_message(msg_id)
 
-        title_embed, content_embed = await self.get_title_content(self, ctx)
+        title_embed, content_embed = await self.get_title_content(ctx)
         embed=discord.Embed(title=title_embed, description=content_embed)
 
         await message.edit(embed=embed)
