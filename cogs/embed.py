@@ -63,8 +63,8 @@ class Embed(commands.Cog):
     async def edit(self, ctx, url):
         url = url.split('/')
         server_id = int(url[4])
-        channel_id = int(url[6])
-        msg_id = int(url[5])
+        channel_id = int(url[5])
+        msg_id = int(url[6])
         server = self.client.get_guild(server_id)
         channel = server.get_channel(channel_id)
         message = await channel.fetch_message(msg_id)
